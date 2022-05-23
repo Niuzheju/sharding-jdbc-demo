@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sharding.jdbc.mapper.OrderMapper">
+    <sql id="base_column">
+        `id`,
+        `store_no`,
+        `desc`,
+        `create_time`
+    </sql>
+
+    <insert id="addOrder">
+        insert into `t_order`(`id`, `store_no`, `desc`, `create_time`)
+        values (#{id}, #{storeNo}, #{desc}, now())
+    </insert>
+
+    <select id="countOrder" resultType="long">
+        select count(*)
+        from t_order
+        where store_no = #{storeNo}
+    </select>
+
+    <select id="getAll" resultType="com.example.sharding.jdbc.entity.OrderEntity">
+        select
+        <include refid="base_column"/>
+        from t_order
+        where store_no = #{storeNo}
+    </select>
+
+    <select id="getById" resultType="com.example.sharding.jdbc.entity.OrderEntity">
+        select
+        <include refid="base_column"/>
+        from t_order
+        where store_no = #{storeNo}
+          and id = #{id}
+    </select>
+
+    <update id="createNewTable" parameterType="long">
+        CREATE TABLE t_order${storeNo}
+        (
+                `id`          bigint   not null comment '订单ID',
+                `store_no`    bigint   not null comment '店铺编号',
+                `desc`        varchar(256) comment '其他信息',
+                `create_time` datetime not null comment '创建时间',
+                primary key (`id`)
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = `utf8mb4` comment '订单表0';
+    </update>
+
+    <select id="existTable" parameterType="long" resultType="int">
+        select count(*)
+        from information_schema.TABLES
+        where LCASE(table_name) = concat('t_order', #{storeNo})
+    </select>
+</mapper>
