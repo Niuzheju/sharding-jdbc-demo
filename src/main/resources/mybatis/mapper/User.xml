@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sharding.jdbc.mapper.UserMapper">
+    <sql id="base_column">
+        `id`,
+        `username`,
+        `password`,
+        `desc`,
+        `create_time`
+    </sql>
+
+    <insert id="addUser" parameterType="com.example.sharding.jdbc.entity.UserEntity">
+        insert into t_user(`username`,
+                           `password`,
+                           `desc`,
+                           `create_time`)
+        values (#{username}, #{password}, #{desc}, now())
+    </insert>
+
+    <select id="getById" resultType="com.example.sharding.jdbc.entity.UserEntity">
+        select
+        <include refid="base_column"/>
+        from t_user
+        where id = #{id}
+    </select>
+
+    <select id="getAll" resultType="com.example.sharding.jdbc.entity.UserEntity">
+        select
+        <include refid="base_column"/>
+        from t_user
+    </select>
+
+    <select id="countUser" resultType="long">
+        select count(*) from t_user
+    </select>
+</mapper>

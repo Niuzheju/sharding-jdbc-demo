@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 @SpringBootTest
-class ShardingJdbcDemoApplicationTests {
+class OrderTest {
 
     @Autowired
     private OrderMapper orderMapper;
